@@ -1,0 +1,45 @@
+It is hard to document GNU Radio code. Here is the general overview of the capability of the Programs wrote here. These programs were able to run on my computer, but I cannot guarantee they will run without any trouble elsewhere.   
+
+
+DISCLAIMER: I stopped working on this since a specific block I needed had a bug in grc 3.7. The bug is fixed in grc 3.8 but this version of grc did not already implement support for the PlutoSDR. 
+
+The support for PlutoSDR, you must install yourself.
+https://wiki.analog.com/resources/tools-software/linux-software/gnuradio
+
+
+### Programs ###
+These are all the files with the '.grc' extention. The custom python blocks are also discussed here.
+
+~ Loopback.grc ~
+This is a program that links the packet builder and an attempt for the packet receiver. The loopback was to ensure all parts of the packet receiver were working. (which it didn't)
+
+	- Packet Generator -
+	This generates a packet with a specific lenght, the block can be adapted to put whatever is needed in the packet. Each time the block gets a signal, a packet is genereated.
+
+
+~ Packet_Builder.grc ~
+This is a hierarchical block that includes all the pieces to prepare the packet before transmission. It needs a preamble and packet at the input and it will procces the packet to a modulated, pusleshaped packet.
+	
+~ Packet_receiver.grc ~
+This is a hierarchical block that includes all the pieces to procces the stream after receiving and getting the data out again. The input should be the stream received from the PlutoSDR, the output should be the same as the output of the Packet_Builder.grc . The reverse steps should be done and the data should be retrieved. 
+This block contained the bug that was fixed for later versions of GNU Radio.
+
+	- Header Tricker -
+	A dirty trick so the Header/payload demux would work when there is no header. Normally this demux expects to receive the packetlengt from the header, but in our case it is a fixed lenght.
+
+~ Trans_pluto.grc ~
+This is the complete transmittor with Pluto SDR for the implemetnation in grc.
+
+	- Packet Inserter - 
+	A big drawback of the pluto is that it is not able to wok with tags like the USRP. This means that the pluto expects a continious stream of data. However we strat from packets which are not continious. This blocks generates a stream of zeros and when a packet is present, it is put onto the stream. 
+
+
+###
+
+The rest of the files are just try outs and supportive files. 
+ 
+
+
+
+
+
